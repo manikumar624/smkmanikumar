@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMK'S Student Helper</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import if desired, otherwise Tailwind's default sans-serif will be used */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the custom message box */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ef4444; /* Red for error */
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+        /* Styling for the PDF container */
+        #pdfDisplayArea {
+            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px; /* Adjust as needed */
+            height: 600px; /* Adjust as needed for better viewing */
+            border-radius: 0.75rem;
+            overflow: hidden; /* Ensures iframe corners are rounded */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #e2e8f0; /* Light gray background while loading */
+        }
+        #pdfFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Custom Message Box -->
+    <div id="messageBox" class="message-box"></div>
+
+    <!-- Main Container for the form -->
+    <div class="flex flex-col md:flex-row bg-white rounded-3xl shadow-xl overflow-hidden max-w-4xl w-full">
+
+        <!-- Left section with image (now an SVG) -->
+        <div class="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-cyan-400 to-green-500 rounded-l-3xl rounded-r-3xl md:rounded-r-none">
+            <!-- Inline SVG for a document/lab sheet icon -->
+            <svg class="w-full max-w-xs object-contain transform -rotate-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="5" y="3" width="14" height="18" rx="2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 8H15" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 12H15" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 16H13" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <!-- Right section with form -->
+        <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+            <!-- First Heading -->
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 text-center md:text-left">IARE WORKSHEETS</h1>
+            <!-- Second Heading -->
+            <h2 class="text-xl md:text-2xl font-bold text-gray-700 mb-8 text-center md:text-left">SMK'S STUDENT HELPER</h2>
+
+            <form class="space-y-6" id="sheet-form">
+                <!-- Input Field (e.g., ID) -->
+                <div>
+                    <input type="text" id="id-input" placeholder="22951A3352"
+                           class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
+                </div>
+
+                <!-- Choose Semester Dropdown -->
+                <div>
+                    <select id="semester-select"
+                            class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none transition duration-200 text-lg">
+                        <option value="" disabled selected>Choose Semester</option>
+                        <option value="sem1">Semester 1</option>
+                        <option value="sem2">Semester 2</option>
+                        <option value="sem3">Semester 3</option>
+                        <option value="sem4">Semester 4</option>
+                        <option value="sem5">Semester 5</option>
+                        <option value="sem6">Semester 6</option>
+                        <option value="sem7">Semester 7</option>
+                        <option value="sem8">Semester 8</option>
+                    </select>
+                </div>
+
+                <!-- Choose Subject Dropdown -->
+                <div>
+                    <select id="subject-select"
+                            class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none transition duration-200 text-lg">
+                        <option value="" disabled selected>Choose Subject</option>
+                        <!-- Options will be dynamically added here by JavaScript -->
+                    </select>
+                </div>
+
+                <!-- Week Number Input -->
+                <div>
+                    <input type="text" id="week-number-input" placeholder="Week Number"
+                           class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
+                </div>
+
+                <!-- Fetch Sheet Button -->
+                <div class="pt-2">
+                    <button type="submit"
+                            class="w-full bg-cyan-500 text-white font-semibold py-3 rounded-xl hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition duration-300 text-lg shadow-lg hover:shadow-xl">
+                        Fetch Sheet
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PDF Display Area -->
+    <div id="pdfDisplayArea" class="hidden flex items-center justify-center">
+        <iframe id="pdfFrame" src="" title="Lab Sheet PDF"></iframe>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const semesterSelect = document.getElementById('semester-select');
+            const subjectSelect = document.getElementById('subject-select');
+            const sheetForm = document.getElementById('sheet-form');
+            const idInput = document.getElementById('id-input');
+            const messageBox = document.getElementById('messageBox');
+            const pdfDisplayArea = document.getElementById('pdfDisplayArea'); // Get the PDF display area
+            const pdfFrame = document.getElementById('pdfFrame'); // Get the iframe
+
+            // Function to display messages in the custom message box
+            function showMessage(message, type = 'error') {
+                messageBox.textContent = message;
+                if (type === 'error') {
+                    messageBox.style.backgroundColor = '#ef4444'; // Red
+                } else {
+                    messageBox.style.backgroundColor = '#22c55e'; // Green (for success)
+                }
+                messageBox.style.display = 'block';
+                setTimeout(() => {
+                    messageBox.style.display = 'none';
+                }, 3000); // Hide after 3 seconds
+            }
+
+            // Add event listener to convert input to uppercase
+            idInput.addEventListener('input', (event) => {
+                event.target.value = event.target.value.toUpperCase();
+            });
+
+            // Define subjects for each semester with their codes
+            const semesterSubjects = {
+                'sem1': [
+                    { value: 'aeec04-basic-electrical-engg-lab', text: 'AEEC04 - Basic Electrical Engineering Laboratory' },
+                    { value: 'acsc02-python-programming-lab', text: 'ACSC02 - Python Programming Laboratory' },
+                    { value: 'amec04-engineering-workshop-practice', text: 'AMEC04 - Engineering Workshop Practice' },
+                    { value: 'ahsc04-english-language-comm-skills-lab', text: 'AHSC04 - English Language and Communication Skills Laboratory' },
+                    { value: 'ahsc05-physics-lab', text: 'AHSC05 - Physics Laboratory' }
+                ],
+                'sem2': [
+                    { value: 'ahsc04-english-language-comm-skills-lab', text: 'AHSC04 - English Language and Communication Skills Laboratory' },
+                    { value: 'ahsc05-physics-lab', text: 'AHSC05 - Physics Laboratory' },
+                    { value: 'acsc05-programming-c-lab', text: 'ACSC05 - Programming for Problem Solving using C Laboratory' }
+                ],
+                'sem3': [
+                    { value: 'acsc10-data-structures-lab', text: 'ACSC10 - Data Structures Laboratory' },
+                    { value: 'aitc03-programming-objects-lab', text: 'AITC03 - Programming with Objects Laboratory' },
+                    { value: 'acsc11-advanced-python-programming-lab', text: 'ACSC11 - Advanced Python Programming Laboratory' }
+                ],
+                'sem4': [
+                    { value: 'aitc07-database-management-systems-lab', text: 'AITC07 - Database Management Systems Laboratory' },
+                    { value: 'acsc15-design-analysis-algorithms-lab', text: 'ACSC15 - Design and Analysis of Algorithms Laboratory' },
+                    { value: 'acsc16-linux-programming-lab', text: 'ACSC16 - Linux Programming Laboratory' }
+                ],
+                'sem5': [
+                    { value: 'acsc21-object-oriented-software-design-lab', text: 'ACSC21 - Object Oriented Software Design Laboratory' },
+                    { value: 'aitc10-web-application-development-lab', text: 'AITC10 - Web Application Development Laboratory' }
+                ],
+                'sem6': [
+                    { value: 'acic08-data-mining-knowledge-discovery-lab', text: 'ACIC08 - Data Mining and Knowledge Discovery Laboratory' },
+                    { value: 'acic09-software-testing-methodologies-lab', text: 'ACIC09 - Software Testing Laboratory' }
+                ],
+                'sem7': [
+                    { value: 'acsc33-cloud-application-development-lab', text: 'ACSC33 - Cloud Application Development Laboratory' },
+                    { value: 'acsc34-big-data-analytics-lab', text: 'ACSC34 - Big Data and Analytics Laboratory' },
+                    { value: 'acic13-project-work-phase-i', text: 'ACIC13 - Project Work (Phase - I)' }
+                ],
+                'sem8': [
+                    // Currently no subjects provided for Semester 8
+                ]
+            };
+
+            // Function to populate the subject dropdown
+            function populateSubjects(selectedSemester) {
+                // Clear existing options
+                subjectSelect.innerHTML = '';
+
+                // Add default "Choose Subject" option
+                let defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Choose Subject';
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                subjectSelect.appendChild(defaultOption);
+
+                // Add subjects for the selected semester
+                const subjectsToDisplay = semesterSubjects[selectedSemester];
+                if (subjectsToDisplay) {
+                    subjectsToDisplay.forEach(subject => {
+                        let option = document.createElement('option');
+                        option.value = subject.value;
+                        option.textContent = subject.text;
+                        subjectSelect.appendChild(option);
+                    });
+                }
+            }
+
+            // Event listener for semester change
+            semesterSelect.addEventListener('change', (event) => {
+                const selectedSemester = event.target.value;
+                populateSubjects(selectedSemester);
+            });
+
+            // Handle form submission
+            sheetForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                const rollNo = idInput.value.trim();
+                const semester = semesterSelect.value;
+                const subject = subjectSelect.value;
+                const weekNumber = document.getElementById('week-number-input').value.trim();
+
+                // Basic validation
+                if (!rollNo || !semester || !subject || !weekNumber) {
+                    showMessage('Please fill in all fields.', 'error');
+                    return;
+                }
+
+                const semesterNumber = semester.replace('sem', '');
+                const subjectCode = subject.split('-')[0].toUpperCase();
+
+                // Construct the URL for the PDF
+                const baseUrl = 'https://iare-data.s3.ap-south-1.amazonaws.com/uploads/STUDENTS/';
+                const pdfUrl = `${baseUrl}${rollNo}/LAB/SEM${semesterNumber}/${subjectCode}/${rollNo}_week${weekNumber}.pdf`;
+
+                console.log('Attempting to open PDF URL in iframe:', pdfUrl); // Log the URL for debugging
+
+                // Set the iframe's src to the PDF URL
+                pdfFrame.src = pdfUrl;
+                pdfDisplayArea.classList.remove('hidden'); // Show the PDF display area
+
+                // You might want to add a loading indicator here
+                pdfFrame.onload = () => {
+                    console.log('PDF loaded in iframe (or failed to load).');
+                    // Remove loading indicator if you added one
+                };
+                pdfFrame.onerror = () => {
+                    console.error('Error loading PDF in iframe.');
+                    showMessage('Failed to load PDF. Please check the inputs or contact support.', 'error');
+                    // Handle error visually if needed
+                };
+            });
+
+            // Initial setup: ensure the subject dropdown shows "Choose Subject" on page load
+            populateSubjects('');
+        });
+    </script>
+
+</body>
+</html>
