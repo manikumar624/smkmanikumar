@@ -1,114 +1,254 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Course PDF Finder</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SMK'S Student Helper</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .message-box {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ef4444;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: none;
+    }
+    #pdfDisplayArea {
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 1200px;
+      height: 800px;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #e2e8f0;
+    }
+    #pdfFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg">
-    <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">📘 Course PDF Finder</h1>
-    
-    <form id="course-form" class="space-y-6">
-      <!-- Roll Number -->
-      <div>
-        <input type="text" id="rollno" placeholder="Enter Roll Number" 
-               class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg" required>
-      </div>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
 
-      <!-- Subject Dropdown -->
-      <div>
-        <select id="subject" 
-                class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
-          <option value="">-- Select Subject --</option>
-          <option value="ACIC01-Data Mining">ACIC01 - Data Mining</option>
-          <option value="ACIC02-Compiler Design">ACIC02 - Compiler Design</option>
-          <option value="ACIC03-Web Security">ACIC03 - Web Security</option>
-          <option value="ACIC04-Software Project Management">ACIC04 - Software Project Management</option>
-        </select>
-      </div>
+  <!-- Custom Message Box -->
+  <div id="messageBox" class="message-box"></div>
 
-      <!-- Manual Course Code (Optional) -->
-      <div>
-        <input type="text" id="course-code-input" placeholder="Enter Course Code (Optional)" 
-               class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
-        <p class="text-sm text-gray-500 mt-1">💡 Optional: Only enter course code if it is <b>not listed</b> above.</p>
-      </div>
+  <!-- Main Container -->
+  <div class="flex flex-col md:flex-row bg-white rounded-3xl shadow-xl overflow-hidden max-w-4xl w-full">
 
-      <!-- Submit Button -->
-      <button type="submit" 
-              class="w-full bg-cyan-600 text-white font-semibold py-3 px-5 rounded-xl hover:bg-cyan-700 transition duration-200 text-lg">
-        🔍 Search PDF
-      </button>
-    </form>
-
-    <!-- Message -->
-    <div id="message" class="mt-6 text-center text-lg"></div>
-
-    <!-- PDF Viewer -->
-    <div id="pdf-container" class="mt-6 hidden">
-      <h2 class="text-xl font-semibold text-gray-700 mb-3">📄 PDF Viewer</h2>
-      <iframe id="pdf-viewer" class="w-full h-[500px] border rounded-xl"></iframe>
+    <!-- Left section -->
+    <div class="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-cyan-400 to-green-500 rounded-l-3xl rounded-r-3xl md:rounded-r-none">
+      <svg class="w-full max-w-xs object-contain transform -rotate-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="3" width="14" height="18" rx="2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 8H15" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 12H15" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 16H13" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
+
+    <!-- Right section -->
+    <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 text-center md:text-left">IARE WORKSHEETS</h1>
+      <h2 class="text-xl md:text-2xl font-bold text-gray-700 mb-8 text-center md:text-left">SMK'S STUDENT HELPER</h2>
+
+      <form class="space-y-6" id="sheet-form">
+        <!-- Roll No -->
+        <div>
+          <input type="text" id="id-input" placeholder="22951A3352"
+                 class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
+        </div>
+
+        <!-- Semester Dropdown -->
+        <div>
+          <select id="semester-select"
+                  class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none transition duration-200 text-lg">
+            <option value="" disabled selected>Choose Semester</option>
+            <option value="sem1">Semester 1</option>
+            <option value="sem2">Semester 2</option>
+            <option value="sem3">Semester 3</option>
+            <option value="sem4">Semester 4</option>
+            <option value="sem5">Semester 5</option>
+            <option value="sem6">Semester 6</option>
+            <option value="sem7">Semester 7</option>
+            <option value="sem8">Semester 8</option>
+          </select>
+        </div>
+
+        <!-- Subject Dropdown -->
+        <div>
+          <select id="subject-select"
+                  class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none transition duration-200 text-lg">
+            <option value="" disabled selected>Choose Subject</option>
+          </select>
+        </div>
+
+        <!-- Manual Course Code -->
+        <div>
+          <input type="text" id="course-code-input" placeholder="Enter Course Code (e.g., ACSC99)"
+                 class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
+          <p class="text-sm text-gray-500 mt-1">Use this only if your course is not listed above.</p>
+        </div>
+
+        <!-- Week Number -->
+        <div>
+          <input type="text" id="week-number-input" placeholder="Week Number"
+                 class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
+        </div>
+
+        <!-- Fetch Button -->
+        <div class="pt-2">
+          <button type="submit"
+                  class="w-full bg-cyan-500 text-white font-semibold py-3 rounded-xl hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition duration-300 text-lg shadow-lg hover:shadow-xl">
+            Fetch Sheet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PDF Display Area -->
+  <div id="pdfDisplayArea" class="hidden flex items-center justify-center">
+    <iframe id="pdfFrame" src="" title="Lab Sheet PDF"></iframe>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.getElementById('course-form');
-      const subjectSelect = document.getElementById('subject');
-      const rollInput = document.getElementById('rollno');
+      const semesterSelect = document.getElementById('semester-select');
+      const subjectSelect = document.getElementById('subject-select');
+      const sheetForm = document.getElementById('sheet-form');
+      const idInput = document.getElementById('id-input');
       const courseCodeInput = document.getElementById('course-code-input');
-      const messageDiv = document.getElementById('message');
-      const pdfContainer = document.getElementById('pdf-container');
-      const pdfViewer = document.getElementById('pdf-viewer');
+      const messageBox = document.getElementById('messageBox');
+      const pdfDisplayArea = document.getElementById('pdfDisplayArea');
+      const pdfFrame = document.getElementById('pdfFrame');
 
-      // Auto-uppercase for Roll No
-      rollInput.addEventListener('input', (event) => {
-        event.target.value = event.target.value.toUpperCase();
+      // Show message
+      function showMessage(message, type = 'error') {
+        messageBox.textContent = message;
+        messageBox.style.backgroundColor = type === 'error' ? '#ef4444' : '#22c55e';
+        messageBox.style.display = 'block';
+        setTimeout(() => {
+          messageBox.style.display = 'none';
+        }, 3000);
+      }
+
+      // Auto-uppercase Roll No
+      idInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.toUpperCase();
       });
 
-      // Auto-uppercase for Course Code
-      courseCodeInput.addEventListener('input', (event) => {
-        event.target.value = event.target.value.toUpperCase();
+      // Auto-uppercase Course Code
+      courseCodeInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.toUpperCase();
       });
 
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
+      // Subjects by semester
+      const semesterSubjects = {
+        'sem1': [
+          { value: 'aeec04-basic-electrical-engg-lab', text: 'AEEC04 - Basic Electrical Engineering Laboratory' },
+          { value: 'acsc02-python-programming-lab', text: 'ACSC02 - Python Programming Laboratory' },
+          { value: 'amec04-engineering-workshop-practice', text: 'AMEC04 - Engineering Workshop Practice' },
+          { value: 'ahsc04-english-language-comm-skills-lab', text: 'AHSC04 - English Language and Communication Skills Laboratory' },
+          { value: 'ahsc05-physics-lab', text: 'AHSC05 - Physics Laboratory' }
+        ],
+        'sem2': [
+          { value: 'ahsc04-english-language-comm-skills-lab', text: 'AHSC04 - English Language and Communication Skills Laboratory' },
+          { value: 'ahsc05-physics-lab', text: 'AHSC05 - Physics Laboratory' },
+          { value: 'acsc05-programming-c-lab', text: 'ACSC05 - Programming for Problem Solving using C Laboratory' }
+        ],
+        'sem3': [
+          { value: 'acsc10-data-structures-lab', text: 'ACSC10 - Data Structures Laboratory' },
+          { value: 'aitc03-programming-objects-lab', text: 'AITC03 - Programming with Objects Laboratory' },
+          { value: 'acsc11-advanced-python-programming-lab', text: 'ACSC11 - Advanced Python Programming Laboratory' }
+        ],
+        'sem4': [
+          { value: 'aitc07-database-management-systems-lab', text: 'AITC07 - Database Management Systems Laboratory' },
+          { value: 'acsc15-design-analysis-algorithms-lab', text: 'ACSC15 - Design and Analysis of Algorithms Laboratory' },
+          { value: 'acsc16-linux-programming-lab', text: 'ACSC16 - Linux Programming Laboratory' }
+        ],
+        'sem5': [
+          { value: 'acsc21-object-oriented-software-design-lab', text: 'ACSC21 - Object Oriented Software Design Laboratory' },
+          { value: 'aitc10-web-application-development-lab', text: 'AITC10 - Web Application Development Laboratory' }
+        ],
+        'sem6': [
+          { value: 'acic08-data-mining-knowledge-discovery-lab', text: 'ACIC08 - Data Mining and Knowledge Discovery Laboratory' },
+          { value: 'acic09-software-testing-methodologies-lab', text: 'ACIC09 - Software Testing Laboratory' }
+        ],
+        'sem7': [
+          { value: 'acsc33-cloud-application-development-lab', text: 'ACSC33 - Cloud Application Development Laboratory' },
+          { value: 'acsc34-big-data-analytics-lab', text: 'ACSC34 - Big Data and Analytics Laboratory' },
+          { value: 'acic13-project-work-phase-i', text: 'ACIC13 - Project Work (Phase - I)' }
+        ],
+        'sem8': []
+      };
 
-        let subject = subjectSelect.value;
-        let manualCourseCode = courseCodeInput.value.trim();
+      function populateSubjects(selectedSemester) {
+        subjectSelect.innerHTML = '';
+        let defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Choose Subject';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        subjectSelect.appendChild(defaultOption);
 
-        if (!subject && !manualCourseCode) {
-          showMessage('⚠️ Please choose a subject OR enter a course code.', 'error');
+        const subjects = semesterSubjects[selectedSemester];
+        if (subjects) {
+          subjects.forEach(subject => {
+            let option = document.createElement('option');
+            option.value = subject.value;
+            option.textContent = subject.text;
+            subjectSelect.appendChild(option);
+          });
+        }
+      }
+
+      semesterSelect.addEventListener('change', (e) => {
+        populateSubjects(e.target.value);
+      });
+
+      // Form submit
+      sheetForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const rollNo = idInput.value.trim();
+        const semester = semesterSelect.value;
+        const subject = subjectSelect.value;
+        const manualCourseCode = courseCodeInput.value.trim();
+        const weekNumber = document.getElementById('week-number-input').value.trim();
+
+        if (!rollNo || !semester || (!subject && !manualCourseCode) || !weekNumber) {
+          showMessage('Please fill in all fields (or enter course code if subject missing).', 'error');
           return;
         }
 
-        // Pick subject code from dropdown or manual input
-        let subjectCode = "";
-        if (subject) {
-          subjectCode = subject.split('-')[0].toUpperCase();
-        } else {
-          subjectCode = manualCourseCode; // already uppercase
-        }
+        const semesterNumber = semester.replace('sem', '');
+        let subjectCode = subject ? subject.split('-')[0].toUpperCase() : manualCourseCode;
 
-        // Example: Build fake PDF link
-        const pdfUrl = `https://example.com/pdfs/${subjectCode}.pdf`;
+        const baseUrl = 'https://iare-data.s3.ap-south-1.amazonaws.com/uploads/STUDENTS/';
+        const pdfUrl = `${baseUrl}${rollNo}/LAB/SEM${semesterNumber}/${subjectCode}/${rollNo}_week${weekNumber}.pdf`;
 
-        showMessage(`✅ Loading PDF for <b>${subjectCode}</b>...`, 'success');
-        pdfContainer.classList.remove('hidden');
-        pdfViewer.src = pdfUrl;
+        console.log('Opening PDF URL:', pdfUrl);
+
+        pdfFrame.src = pdfUrl;
+        pdfDisplayArea.classList.remove('hidden');
       });
 
-      function showMessage(msg, type) {
-        messageDiv.innerHTML = msg;
-        if (type === 'error') {
-          messageDiv.className = "mt-6 text-center text-lg text-red-600 font-semibold";
-        } else {
-          messageDiv.className = "mt-6 text-center text-lg text-green-600 font-semibold";
-        }
-      }
+      populateSubjects('');
     });
   </script>
 </body>
 </html>
+```
