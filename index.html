@@ -4,27 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SMK'S Student Helper</title>
-
-  <!-- ✅ Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    body {
-      font-family: 'Inter', sans-serif;
-    }
+    body { font-family: 'Inter', sans-serif; }
     .message-box {
       position: fixed;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #ef4444;
-      color: white;
       padding: 1rem 2rem;
       border-radius: 0.75rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       z-index: 1000;
       display: none;
+      color: white;
     }
     #pdfDisplayArea {
       margin-top: 2rem;
@@ -33,26 +27,21 @@
       height: 800px;
       border-radius: 0.75rem;
       overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       background-color: #e2e8f0;
     }
-    #pdfFrame {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    #pdfFrame { width:100%; height:100%; border:none; }
   </style>
 </head>
-
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
 
-  <!-- Custom Message Box -->
+  <!-- Message box -->
   <div id="messageBox" class="message-box"></div>
 
-  <!-- Main Card -->
+  <!-- Card -->
   <div class="flex flex-col md:flex-row bg-white rounded-3xl shadow-xl overflow-hidden max-w-4xl w-full">
 
-    <!-- Left section (gradient + icon) -->
+    <!-- Left gradient -->
     <div class="md:w-1/2 p-8 flex items-center justify-center bg-gradient-to-br from-cyan-400 to-green-500 rounded-l-3xl rounded-r-3xl md:rounded-r-none">
       <svg class="w-full max-w-xs object-contain transform -rotate-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="5" y="3" width="14" height="18" rx="2" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -62,21 +51,20 @@
       </svg>
     </div>
 
-    <!-- Right section (form) -->
+    <!-- Right form -->
     <div class="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
       <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-2 text-center md:text-left">IARE WORKSHEETS</h1>
       <h2 class="text-xl md:text-2xl font-bold text-gray-700 mb-8 text-center md:text-left">SMK'S STUDENT HELPER</h2>
 
-      <!-- Form -->
       <form class="space-y-6" id="sheet-form">
-        <!-- Roll No -->
+        <!-- Roll -->
         <div>
           <input type="text" id="id-input" placeholder="22951A3352"
                  class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
           <p class="text-sm text-gray-500 mt-1">👉 Enter your roll number or your senior’s/friend’s roll number.</p>
         </div>
 
-        <!-- Semester Dropdown -->
+        <!-- Semester -->
         <div>
           <select id="semester-select"
                   class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none transition duration-200 text-lg">
@@ -92,7 +80,7 @@
           </select>
         </div>
 
-        <!-- Subject Dropdown -->
+        <!-- Subject -->
         <div>
           <select id="subject-select"
                   class="w-full px-5 py-3 border border-gray-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-cyan-500 appearance-none transition duration-200 text-lg">
@@ -101,28 +89,28 @@
           <p class="text-sm text-gray-500 mt-1">📘 Select your subject from the list.</p>
         </div>
 
-        <!-- OR Separator -->
+        <!-- OR separator -->
         <div class="flex items-center justify-center">
           <hr class="w-1/4 border-gray-300">
           <span class="mx-3 text-gray-500 font-semibold">OR</span>
           <hr class="w-1/4 border-gray-300">
         </div>
 
-        <!-- Manual Course Code -->
+        <!-- Manual course code -->
         <div>
           <input type="text" id="course-code-input" placeholder="Enter Course Code (e.g., ACSC99)"
                  class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
           <p class="text-sm text-gray-500 mt-1">⚠️ If your subject isn’t in the dropdown, type your course code here manually.</p>
         </div>
 
-        <!-- Week Number -->
+        <!-- Week -->
         <div>
           <input type="text" id="week-number-input" placeholder="Week Number"
                  class="w-full px-5 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-200 text-lg">
           <p class="text-sm text-gray-500 mt-1">🗓️ Enter the week number you want to fetch.</p>
         </div>
 
-        <!-- Fetch Button -->
+        <!-- Fetch -->
         <div class="pt-2">
           <button type="submit"
                   class="w-full bg-cyan-500 text-white font-semibold py-3 rounded-xl hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition duration-300 text-lg shadow-lg hover:shadow-xl">
@@ -133,7 +121,7 @@
     </div>
   </div>
 
-  <!-- PDF Display Area -->
+  <!-- PDF viewer -->
   <div id="pdfDisplayArea" class="hidden flex items-center justify-center">
     <iframe id="pdfFrame" src="" title="Lab Sheet PDF"></iframe>
   </div>
@@ -156,45 +144,82 @@
         setTimeout(() => { messageBox.style.display = 'none'; }, 3000);
       }
 
+      // Auto uppercase
       idInput.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
       courseCodeInput.addEventListener('input', e => e.target.value = e.target.value.toUpperCase());
 
+      // Full subject lists (expanded)
       const semesterSubjects = {
         'sem1': [
           { value: 'aeec04-basic-electrical-engg-lab', text: 'AEEC04 - Basic Electrical Engineering Laboratory' },
-          { value: 'acsc02-python-programming-lab', text: 'ACSC02 - Python Programming Laboratory' }
+          { value: 'acsc02-python-programming-lab', text: 'ACSC02 - Python Programming Laboratory' },
+          { value: 'amec04-engineering-workshop-practice', text: 'AMEC04 - Engineering Workshop Practice' },
+          { value: 'ahsc04-english-language-comm-skills-lab', text: 'AHSC04 - English Language & Communication Skills Laboratory' },
+          { value: 'ahsc05-physics-lab', text: 'AHSC05 - Physics Laboratory' }
         ],
         'sem2': [
-          { value: 'acsc05-programming-c-lab', text: 'ACSC05 - Programming for Problem Solving using C Laboratory' }
+          { value: 'ahsc04-english-language-comm-skills-lab', text: 'AHSC04 - English Language & Communication Skills Laboratory' },
+          { value: 'ahsc05-physics-lab', text: 'AHSC05 - Physics Laboratory' },
+          { value: 'acsc05-programming-c-lab', text: 'ACSC05 - Programming for Problem Solving using C Laboratory' },
+          { value: 'amec02-basic-mechanical-engineering-lab', text: 'AMEC02 - Basic Mechanical Engineering Laboratory' }
         ],
         'sem3': [
-          { value: 'acsc10-data-structures-lab', text: 'ACSC10 - Data Structures Laboratory' }
+          { value: 'acsc10-data-structures-lab', text: 'ACSC10 - Data Structures Laboratory' },
+          { value: 'aitc03-programming-objects-lab', text: 'AITC03 - Programming with Objects Laboratory' },
+          { value: 'acsc11-advanced-python-programming-lab', text: 'ACSC11 - Advanced Python Programming Laboratory' },
+          { value: 'aetc01-basic-electronics-lab', text: 'AETC01 - Basic Electronics Laboratory' }
         ],
         'sem4': [
-          { value: 'aitc07-database-management-systems-lab', text: 'AITC07 - DBMS Laboratory' }
+          { value: 'aitc07-database-management-systems-lab', text: 'AITC07 - Database Management Systems Laboratory' },
+          { value: 'acsc15-design-analysis-algorithms-lab', text: 'ACSC15 - Design & Analysis of Algorithms Laboratory' },
+          { value: 'acsc16-linux-programming-lab', text: 'ACSC16 - Linux Programming Laboratory' },
+          { value: 'acsc17-computer-organization-lab', text: 'ACSC17 - Computer Organization Laboratory' }
         ],
         'sem5': [
-          { value: 'acsc21-object-oriented-software-design-lab', text: 'ACSC21 - OOSD Laboratory' }
+          { value: 'acsc21-object-oriented-software-design-lab', text: 'ACSC21 - Object Oriented Software Design Laboratory' },
+          { value: 'aitc10-web-application-development-lab', text: 'AITC10 - Web Application Development Laboratory' },
+          { value: 'acsc22-software-engineering-lab', text: 'ACSC22 - Software Engineering Laboratory' }
         ],
         'sem6': [
-          { value: 'acic08-data-mining-knowledge-discovery-lab', text: 'ACIC08 - DMKD Laboratory' }
+          { value: 'acic08-data-mining-knowledge-discovery-lab', text: 'ACIC08 - Data Mining & Knowledge Discovery Laboratory' },
+          { value: 'acic09-software-testing-methodologies-lab', text: 'ACIC09 - Software Testing Laboratory' },
+          { value: 'acsc30-machine-learning-lab', text: 'ACSC30 - Machine Learning Laboratory' }
         ],
         'sem7': [
-          { value: 'acsc33-cloud-application-development-lab', text: 'ACSC33 - Cloud Application Development Laboratory' }
+          { value: 'acsc33-cloud-application-development-lab', text: 'ACSC33 - Cloud Application Development Laboratory' },
+          { value: 'acsc34-big-data-analytics-lab', text: 'ACSC34 - Big Data & Analytics Laboratory' },
+          { value: 'acic13-project-work-phase-i', text: 'ACIC13 - Project Work (Phase - I)' }
         ],
-        'sem8': []
+        'sem8': [
+          { value: 'acic14-project-work-phase-ii', text: 'ACIC14 - Project Work (Phase - II)' },
+          { value: 'acsc40-internship-report', text: 'ACSC40 - Internship / Industrial Training' }
+        ]
       };
 
       function populateSubjects(selectedSemester) {
-        subjectSelect.innerHTML = '<option value="" disabled selected>Choose Subject</option>';
+        subjectSelect.innerHTML = ''; // clear
+        const defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = 'Choose Subject';
+        defaultOpt.disabled = true;
+        defaultOpt.selected = true;
+        subjectSelect.appendChild(defaultOpt);
+
         const subjects = semesterSubjects[selectedSemester];
-        if (subjects) {
+        if (subjects && subjects.length) {
           subjects.forEach(subject => {
             const option = document.createElement('option');
             option.value = subject.value;
             option.textContent = subject.text;
             subjectSelect.appendChild(option);
           });
+        } else {
+          // friendly placeholder when no subjects found
+          const noOpt = document.createElement('option');
+          noOpt.value = '';
+          noOpt.textContent = 'No subjects found — enter course code below';
+          noOpt.disabled = true;
+          subjectSelect.appendChild(noOpt);
         }
       }
 
@@ -209,19 +234,28 @@
         const weekNumber = document.getElementById('week-number-input').value.trim();
 
         if (!rollNo || !semester || (!subject && !manualCourseCode) || !weekNumber) {
-          showMessage('Please fill all fields or enter course code manually.', 'error');
+          showMessage('Please fill in all fields (or enter course code if subject missing).', 'error');
           return;
         }
 
         const semesterNumber = semester.replace('sem', '');
-        const subjectCode = subject ? subject.split('-')[0].toUpperCase() : manualCourseCode;
+        // If user selected subject option value like "acsc10-data-structures-lab", extract code before first '-'
+        let subjectCode = '';
+        if (subject) {
+          subjectCode = subject.split('-')[0].toUpperCase();
+        } else {
+          subjectCode = manualCourseCode.toUpperCase();
+        }
+
         const baseUrl = 'https://iare-data.s3.ap-south-1.amazonaws.com/uploads/STUDENTS/';
         const pdfUrl = `${baseUrl}${rollNo}/LAB/SEM${semesterNumber}/${subjectCode}/${rollNo}_week${weekNumber}.pdf`;
 
+        // open pdf in iframe
         pdfFrame.src = pdfUrl;
         pdfDisplayArea.classList.remove('hidden');
       });
 
+      // initialize (no semester selected)
       populateSubjects('');
     });
   </script>
